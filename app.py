@@ -37,12 +37,14 @@ elemento_random = random.choice(list(elementos.keys()))
 # Mostrar el nombre del elemento y pedir la abreviatura
 respuesta_usuario = st.text_input(f"¿Cuál es la abreviatura de {elemento_random}?")
 
-# Botón para verificar la respuesta
-if st.button("Verificar respuesta"):
-    if respuesta_usuario:
-        if verificar_respuesta(elemento_random, respuesta_usuario.upper()):
-            st.success("¡Correcto! 🎉")
-        else:
-            st.error("¡Incorrecto! 😞 La respuesta correcta es " + elementos[elemento_random])
+# Función para manejar los botones
+if respuesta_usuario:
+    if verificar_respuesta(elemento_random, respuesta_usuario.upper()):
+        if st.button("¡Correcto! 🎉"):
+            st.success("¡Respuesta correcta!")
     else:
-        st.warning("Por favor, ingresa una respuesta.")
+        if st.button("¡Incorrecto! 😞"):
+            st.error(f"Respuesta incorrecta. La respuesta correcta es {elementos[elemento_random]}")
+else:
+    st.warning("Por favor, ingresa una respuesta para verificar.")
+
