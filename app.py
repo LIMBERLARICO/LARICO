@@ -1,44 +1,59 @@
 import streamlit as st
-import random
 
-# Lista de elementos químicos y sus abreviaturas
-elementos = {
-    "Hidrógeno": "H",
-    "Helio": "He",
-    "Litio": "Li",
-    "Berilio": "Be",
-    "Boro": "B",
-    "Carbono": "C",
-    "Nitrógeno": "N",
-    "Oxígeno": "O",
-    "Flúor": "F",
-    "Neón": "Ne",
-    # Agrega más elementos según sea necesario
-}
+st.title("🔬 Calculadora de Química Básica")
 
-# Función para verificar si la respuesta es correcta
-def verificar_respuesta(elemento, respuesta):
-    return elementos[elemento] == respuesta.upper()
+opcion = st.selectbox("¿Qué operación deseas hacer?", [
+    "Cálculo de masa molar",
+    "Ley de los gases ideales",
+    "Estequiometría básica"
+])
 
-# Título de la página
-st.title("Prueba de Abreviaturas de Elementos Químicos")
+if opcion == "Cálculo de masa molar":
+    st.header("🧪 Cálculo de masa molar")
+    elemento = st.text_input("Introduce el símbolo del elemento (ej. H, O, Na, Cl):")
+    
+    masas_molares = {
+        'H': 1.008,
+        'O': 15.999,
+        'Na': 22.990,
+        'Cl': 35.45,
+        'C': 12.011,
+        'N': 14.007,
+        'S': 32.06,
+        'Mg': 24.305
+    }
+    
+    if elemento in masas_molares:
+        st.success(f"La masa molar de {elemento} es {masas_molares[elemento]} g/mol.")
+    elif elemento:
+        st.error("Elemento no reconocido. Intenta con H, O, Na, etc.")
 
-# Descripción
-st.write("En esta página podrás poner a prueba tus conocimientos sobre los elementos químicos y sus abreviaturas.")
+elif opcion == "Ley de los gases ideales":
+    st.header("💨 Ley de los gases ideales: PV = nRT")
+    
+    P = st.number_input("Presión (atm)", min_value=0.0)
+    V = st.number_input("Volumen (L)", min_value=0.0)
+    T = st.number_input("Temperatura (K)", min_value=0.0)
+    R = 0.0821  # Constante de los gases ideales (L·atm/mol·K)
 
-# Escoger un elemento aleatorio de la lista
-elemento_random = random.choice(list(elementos.keys()))
+    if st.button("Calcular moles (n)"):
+        if T > 0:
+            n = (P * V) / (R * T)
+            st.success(f"Cantidad de sustancia: {n:.4f} moles")
+        else:
+            st.error("La temperatura debe ser mayor que 0 K")
 
-# Mostrar el nombre completo del elemento y pedir la abreviatura
-respuesta_usuario = st.text_input(f"¿Cuál es la abreviatura de {elemento_random}?")
+elif opcion == "Estequiometría básica":
+    st.header("⚖️ Cálculo estequiométrico")
+    
+    masa_dada = st.number_input("Masa del reactivo (g)", min_value=0.0)
+    masa_molar = st.number_input("Masa molar del reactivo (g/mol)", min_value=0.0)
+    relacion = st.number_input("Relación molar producto/reactivo", value=1.0)
 
-# Verificar respuesta y mostrar mensaje según sea correcto o incorrecto
-if respuesta_usuario:
-    if verificar_respuesta(elemento_random, respuesta_usuario):
-        if st.button("¡Correcto! 🎉"):
-            st.success("¡Respuesta correcta!")
-    else:
-        if st.button("¡Incorrecto! 😞"):
-            st.error(f"Respuesta incorrecta. La respuesta correcta es {elementos[elemento_random]}")
-else:
-    st.warning("Por favor, ingresa una respuesta para verificar.")
+    if st.button("Calcular moles del producto"):
+        if masa_molar > 0:
+            moles_reactivo = masa_dada / masa_molar
+            moles_producto = moles_reactivo * relacion
+            st.success(f"Se producen {moles_producto:.2f} moles del producto.")
+        else:
+            st.error("La masa molar debe ser mayor que 0")
