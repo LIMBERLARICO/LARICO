@@ -1,59 +1,52 @@
-import streamlit as st
+import random
 
-st.title("🔬 Calculadora de Química Básica")
+# Base de datos resumida
+tabla_periodica = [
+    {"nombre": "Hidrógeno", "simbolo": "H", "numero_atomico": 1, "grupo": 1, "periodo": 1, "tipo": "No metal"},
+    {"nombre": "Helio", "simbolo": "He", "numero_atomico": 2, "grupo": 18, "periodo": 1, "tipo": "Gas noble"},
+    {"nombre": "Litio", "simbolo": "Li", "numero_atomico": 3, "grupo": 1, "periodo": 2, "tipo": "Metal alcalino"},
+    {"nombre": "Berilio", "simbolo": "Be", "numero_atomico": 4, "grupo": 2, "periodo": 2, "tipo": "Metal alcalinotérreo"},
+    {"nombre": "Boro", "simbolo": "B", "numero_atomico": 5, "grupo": 13, "periodo": 2, "tipo": "Metaloide"},
+    {"nombre": "Carbono", "simbolo": "C", "numero_atomico": 6, "grupo": 14, "periodo": 2, "tipo": "No metal"},
+    {"nombre": "Nitrógeno", "simbolo": "N", "numero_atomico": 7, "grupo": 15, "periodo": 2, "tipo": "No metal"},
+    {"nombre": "Oxígeno", "simbolo": "O", "numero_atomico": 8, "grupo": 16, "periodo": 2, "tipo": "No metal"},
+    {"nombre": "Flúor", "simbolo": "F", "numero_atomico": 9, "grupo": 17, "periodo": 2, "tipo": "Halógeno"},
+    {"nombre": "Neón", "simbolo": "Ne", "numero_atomico": 10, "grupo": 18, "periodo": 2, "tipo": "Gas noble"}
+]
 
-opcion = st.selectbox("¿Qué operación deseas hacer?", [
-    "Cálculo de masa molar",
-    "Ley de los gases ideales",
-    "Estequiometría básica"
-])
+def hacer_pregunta():
+    elemento = random.choice(tabla_periodica)
+    tipo_pregunta = random.choice(["simbolo", "grupo", "periodo", "tipo"])
 
-if opcion == "Cálculo de masa molar":
-    st.header("🧪 Cálculo de masa molar")
-    elemento = st.text_input("Introduce el símbolo del elemento (ej. H, O, Na, Cl):")
-    
-    masas_molares = {
-        'H': 1.008,
-        'O': 15.999,
-        'Na': 22.990,
-        'Cl': 35.45,
-        'C': 12.011,
-        'N': 14.007,
-        'S': 32.06,
-        'Mg': 24.305
-    }
-    
-    if elemento in masas_molares:
-        st.success(f"La masa molar de {elemento} es {masas_molares[elemento]} g/mol.")
-    elif elemento:
-        st.error("Elemento no reconocido. Intenta con H, O, Na, etc.")
+    if tipo_pregunta == "simbolo":
+        respuesta = input(f"¿Cuál es el símbolo del elemento {elemento['nombre']}? ").strip()
+        correcta = elemento['simbolo']
 
-elif opcion == "Ley de los gases ideales":
-    st.header("💨 Ley de los gases ideales: PV = nRT")
-    
-    P = st.number_input("Presión (atm)", min_value=0.0)
-    V = st.number_input("Volumen (L)", min_value=0.0)
-    T = st.number_input("Temperatura (K)", min_value=0.0)
-    R = 0.0821  # Constante de los gases ideales (L·atm/mol·K)
+    elif tipo_pregunta == "grupo":
+        respuesta = input(f"¿A qué grupo pertenece el elemento {elemento['nombre']}? ").strip()
+        correcta = str(elemento['grupo'])
 
-    if st.button("Calcular moles (n)"):
-        if T > 0:
-            n = (P * V) / (R * T)
-            st.success(f"Cantidad de sustancia: {n:.4f} moles")
-        else:
-            st.error("La temperatura debe ser mayor que 0 K")
+    elif tipo_pregunta == "periodo":
+        respuesta = input(f"¿En qué periodo se encuentra el elemento {elemento['nombre']}? ").strip()
+        correcta = str(elemento['periodo'])
 
-elif opcion == "Estequiometría básica":
-    st.header("⚖️ Cálculo estequiométrico")
-    
-    masa_dada = st.number_input("Masa del reactivo (g)", min_value=0.0)
-    masa_molar = st.number_input("Masa molar del reactivo (g/mol)", min_value=0.0)
-    relacion = st.number_input("Relación molar producto/reactivo", value=1.0)
+    elif tipo_pregunta == "tipo":
+        respuesta = input(f"¿El elemento {elemento['nombre']} es un metal, no metal, metaloide, etc.? ").strip().lower()
+        correcta = elemento['tipo'].lower()
 
-    if st.button("Calcular moles del producto"):
-        if masa_molar > 0:
-            moles_reactivo = masa_dada / masa_molar
-            moles_producto = moles_reactivo * relacion
-            st.success(f"Se producen {moles_producto:.2f} moles del producto.")
-        else:
-            st.error("La masa molar debe ser mayor que 0")
+    if respuesta.lower() == correcta.lower():
+        print("✅ ¡Correcto!\n")
+    else:
+        print(f"❌ Incorrecto. La respuesta correcta es: {correcta}\n")
+
+def main():
+    print("🧪 Bienvenido al Quiz de la Tabla Periódica 🧪")
+    while True:
+        hacer_pregunta()
+        seguir = input("¿Quieres otra pregunta? (s/n): ").strip().lower()
+        if seguir != "s":
+            print("¡Gracias por jugar! 👋")
+            break
+
+if __name__ == "__main__":
+    main()
