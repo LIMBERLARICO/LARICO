@@ -1,6 +1,11 @@
+import streamlit as st
 import random
 
-# Base de datos resumida
+st.set_page_config(page_title="Quiz de la Tabla Periódica", layout="centered")
+
+st.title("🧪 Quiz de la Tabla Periódica")
+
+# Datos simples, puedes extenderlos o cargarlos de un JSON externo
 tabla_periodica = [
     {"nombre": "Hidrógeno", "simbolo": "H", "numero_atomico": 1, "grupo": 1, "periodo": 1, "tipo": "No metal"},
     {"nombre": "Helio", "simbolo": "He", "numero_atomico": 2, "grupo": 18, "periodo": 1, "tipo": "Gas noble"},
@@ -14,39 +19,38 @@ tabla_periodica = [
     {"nombre": "Neón", "simbolo": "Ne", "numero_atomico": 10, "grupo": 18, "periodo": 2, "tipo": "Gas noble"}
 ]
 
-def hacer_pregunta():
-    elemento = random.choice(tabla_periodica)
-    tipo_pregunta = random.choice(["simbolo", "grupo", "periodo", "tipo"])
+# Preguntas posibles
+preguntas = {
+    "simbolo": "¿Cuál es el símbolo del elemento {nombre}?",
+    "grupo": "¿A qué grupo pertenece el elemento {nombre}?",
+    "periodo": "¿En qué período está el elemento {nombre}?",
+    "tipo": "¿Qué tipo de elemento es {nombre}?"
+}
 
-    if tipo_pregunta == "simbolo":
-        respuesta = input(f"¿Cuál es el símbolo del elemento {elemento['nombre']}? ").strip()
-        correcta = elemento['simbolo']
+if "elemento" not in st.session_state:
+    st.session_state.elemento = random.choice(tabla_periodica)
+    st.session_state.tipo_pregunta = random.choice(list(preguntas.keys()))
+    st.session_state.mostrar_resultado = False
 
-    elif tipo_pregunta == "grupo":
-        respuesta = input(f"¿A qué grupo pertenece el elemento {elemento['nombre']}? ").strip()
-        correcta = str(elemento['grupo'])
+elemento = st.session_state.elemento
+tipo_pregunta = st.session_state.tipo_pregunta
+pregunta_texto = preguntas[tipo_pregunta].format(nombre=elemento["nombre"])
 
-    elif tipo_pregunta == "periodo":
-        respuesta = input(f"¿En qué periodo se encuentra el elemento {elemento['nombre']}? ").strip()
-        correcta = str(elemento['periodo'])
+st.subheader(pregunta_texto)
 
-    elif tipo_pregunta == "tipo":
-        respuesta = input(f"¿El elemento {elemento['nombre']} es un metal, no metal, metaloide, etc.? ").strip().lower()
-        correcta = elemento['tipo'].lower()
+respuesta_usuario = st.text_input("Tu respuesta:")
 
-    if respuesta.lower() == correcta.lower():
-        print("✅ ¡Correcto!\n")
+if st.button("Responder"):
+    correcta = str(elemento[tipo_pregunta]).lower()
+    if respuesta_usuario.strip().lower() == correcta:
+        st.success("✅ ¡Correcto!")
     else:
-        print(f"❌ Incorrecto. La respuesta correcta es: {correcta}\n")
+        st.error(f"❌ Incorrecto. La respuesta correcta es: **{correcta}**")
+    st.session_state.mostrar_resultado = True
 
-def main():
-    print("🧪 Bienvenido al Quiz de la Tabla Periódica 🧪")
-    while True:
-        hacer_pregunta()
-        seguir = input("¿Quieres otra pregunta? (s/n): ").strip().lower()
-        if seguir != "s":
-            print("¡Gracias por jugar! 👋")
-            break
+if st.session_state.mostrar_resultado:
+    if st.button("Siguiente pregunta"):
+        st.session_state.elemento = random.choice(tabla_periodica)
+        st.session_state.tipo_pregunta = random.choice(list(preguntas.keys()))
+        st.session_state.mostrar_resultado = False
 
-if __name__ == "__main__":
-    main()
